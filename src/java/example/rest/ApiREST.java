@@ -77,7 +77,10 @@ public class ApiREST {
                 response("ValidarUsuarioYClave", "Usuario: "+usuario+", Clave: "+clave, String.valueOf(r)), MediaType.APPLICATION_JSON).build();
         }else{
             ////Error cod 401
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .header("Access-Control-Allow-Origin", "*")
+                    .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+                    .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With").build();
         }
     }
     
@@ -103,7 +106,10 @@ public class ApiREST {
                     .add("JWT", jwt).build();
             /*return Response.ok(
                 response("ValidarUsuarioYClave", "Usuario: "+usuario+", Clave: "+clave, String.valueOf(r)), MediaType.APPLICATION_JSON).build();*/
-            return Response.status(Response.Status.CREATED).entity(json).build();
+            return Response.status(Response.Status.CREATED).entity(json)
+                    .header("Access-Control-Allow-Origin", "*")
+                    .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+                    .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With").build();
             // Usuario prueba exitosa: http://localhost:8080/wsjavanov5/jcmouse/restapi/restKiosco/jwt/53065192/Lore0204*
         }else{
             ////Error cod 401
