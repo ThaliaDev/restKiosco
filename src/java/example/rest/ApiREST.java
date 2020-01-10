@@ -74,24 +74,24 @@ public class ApiREST {
         String[] parametros={usuario, clave};
         if (r==true) {
             return Response.ok(
-                response("ValidarUsuarioYClave", "Usuario: "+usuario+", Clave: "+clave, String.valueOf(r)), MediaType.APPLICATION_JSON).build();
-        }else{
-            ////Error cod 401
-            return Response.status(Response.Status.UNAUTHORIZED)
+                response("ValidarUsuarioYClave", "Usuario: "+usuario+", Clave: "+clave, String.valueOf(r)), MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Origin", "*")
                     .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
                     .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With").build();
+        }else{
+            ////Error cod 401
+            return Response.status(Response.Status.UNAUTHORIZED).build();
         }
     }
     
     
     @GET
-    @Path("/restKiosco/jwt/{usuario}/{clave}")
+    @Path("/restKiosco/jwt/{usuario}/{clave}/{nit}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getJWT(@PathParam("usuario") String usuario, @PathParam("clave") String clave){
+    public Response getJWT(@PathParam("usuario") String usuario, @PathParam("clave") String clave, @PathParam("nit") String nit){
         Kiosco k=new Kiosco();
-        Boolean r=k.validarUsuarioClave(usuario, clave);
-        String[] parametros={usuario, clave};
+        Boolean r=k.validarLogin(usuario, clave, nit);
+        
         if (r==true) {
             long tiempo=System.currentTimeMillis();
             String jwt=Jwts.builder()
@@ -110,12 +110,45 @@ public class ApiREST {
                     .header("Access-Control-Allow-Origin", "*")
                     .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
                     .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With").build();
-            // Usuario prueba exitosa: http://localhost:8080/wsjavanov5/jcmouse/restapi/restKiosco/jwt/53065192/Lore0204*
+            // Usuario prueba exitosa: http://localhost:8080/wsjavanov5/jcmouse/restapi/restKiosco/jwt/91522236/Majo1902*/80040186
+        }else{
+            ////Error cod 401
+            // return Response.status(Response.Status.UNAUTHORIZED).build();
+             return Response.status(Response.Status.NOT_FOUND.getStatusCode()).entity("Usuario, contraseña y/o empresa incorrectos").build();
+
+            
+        }
+    }
+    
+    
+    // GET USUARIO
+    @GET
+    @Path("/restKiosco/getDatosEmpleadoNit/{codEmpleado}/{nit}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDatosUsuario(@PathParam("codEmpleado") String codEmpleado, @PathParam("nit") String nit){
+        Kiosco k=new Kiosco();
+        String r=k.getDatosEmpleadoNit(codEmpleado, nit);
+        String[] parametros={codEmpleado, nit};
+        
+        
+        if (1==1) {
+            /*return Response.ok(
+                response("getDatosEmpleNit", "Usuario: "+datos+", "
+                        + "Clave: "+codEmpleado, String.valueOf(r)), 
+                    MediaType.APPLICATION_JSON).build();*/
+             return Response.ok(r, MediaType.APPLICATION_JSON)
+             // return Response.status(Response.Status.CREATED).entity(r)
+                    .header("Access-Control-Allow-Origin", "*")
+                    .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+                    .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With").build();
+
         }else{
             ////Error cod 401
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
     }
+    
+    
     
     /**
      * metodo privado para dar formato al JSON de respuesta
